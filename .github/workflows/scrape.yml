@@ -1,0 +1,67 @@
+name: Run Web Scraper on TakeUForward A2Z
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'Target URL to scrape'
+        required: true
+        default: 'https://takeuforward.org/strivers-a2z-dsa-course/strivers-a2z-dsa-course-sheet-2'
+      mode:
+        description: 'Scraping mode'
+        required: true
+        default: '--auto'
+        type: choice
+        options:
+          - '--auto'
+          - '--auto --click-all'
+          - '--html --all'
+          - '--crawl --depth 3'
+  schedule:
+    - cron: '0 6 * * 1'  # Every Monday at 6 AM UTC
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Run TakeUForward A2Z Scraper
+        run: |
+          python takeuforward_scraper.py
+        env:
+          PYTHONUNBUFFERED: "1"
+
+      - name: Upload scraping results
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraping-results-${{ github.run_number }}
+          path: |
+            takeuforward_a2z.json
+            takeuforward_a2z.csv
+          retention-days: 30
+
+      - name: Display summary
+        run: |
+          echo "## Scraping Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f takeuforward_a2z.json ]; then
+            SIZE=$(wc -c < takeuforward_a2z.json)
+            echo "- **Output file size:** ${SIZE} bytes" >> $GITHUB_STEP_SUMMARY
+            echo "- **JSON Preview (first 50 lines):**" >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            head -50 takeuforward_a2z.json >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi

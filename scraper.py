@@ -4,7 +4,7 @@ Dynamic Universal Web Scraper
 Works with ANY site - localhost, remote, SPA, static, API-driven.
 Auto-discovers APIs, intercepts network traffic, clicks through pages,
 extracts HTML/CSS/JS/Forms/Media, and deep-crawls.
-MEOWWWWWWW
+
 Usage:
     # Auto-mode: discovers everything automatically
     python scraper.py http://localhost:5173 --auto

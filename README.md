@@ -121,3 +121,5 @@ python scraper.py https://example.com --links -o links.json
 - A browser-like User-Agent header is sent to avoid basic blocks
 - For JavaScript-rendered pages (SPAs), this basic scraper won't work — you'd need Selenium or Playwright
 - Always check a website's `robots.txt` and Terms of Service before scraping
+
+<!-- test: 2026-05-27 09:34 -->
